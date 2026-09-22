@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <AssemblyName>SnapshotStore.Table</AssemblyName>
+        <RootNamespace>SnapshotStore.Table</RootNamespace>
+        <Description>Azure Table Storage record source for SnapshotStore: the common two-level shape, Table as the system of record, Blob (SnapshotStore.Azure) as the cached snapshot.</Description>
+        <PackageTags>cache;snapshot;incremental;read-through;azure-tables</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="LICENSE" Pack="true" PackagePath="\" />
+        <None Include="../../README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Azure.Data.Tables" Version="12.12.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SnapshotStore\SnapshotStore.csproj" />
+    </ItemGroup>
+
+</Project>

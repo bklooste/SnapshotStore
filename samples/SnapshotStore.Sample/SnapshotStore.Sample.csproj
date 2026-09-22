@@ -12,11 +12,15 @@
     <ItemGroup>
         <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.15.3" />
         <PackageReference Include="StackExchange.Redis" Version="2.10.1" />
+        <PackageReference Include="Azure.Data.Tables" Version="12.12.0" />
+        <PackageReference Include="Azure.Storage.Blobs" Version="12.26.0" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\SnapshotStore\SnapshotStore.csproj" />
         <ProjectReference Include="..\..\src\SnapshotStore.Redis\SnapshotStore.Redis.csproj" />
+        <ProjectReference Include="..\..\src\SnapshotStore.Table\SnapshotStore.Table.csproj" />
+        <ProjectReference Include="..\..\src\SnapshotStore.Azure\SnapshotStore.Azure.csproj" />
     </ItemGroup>
 
 </Project>

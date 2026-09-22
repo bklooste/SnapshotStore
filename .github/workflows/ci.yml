@@ -39,7 +39,10 @@ jobs:
           check src/SnapshotStore/obj/project.assets.json "Azure."
           check src/SnapshotStore/obj/project.assets.json "StackExchange.Redis"
           check src/SnapshotStore.Azure/obj/project.assets.json "StackExchange.Redis"
+          check src/SnapshotStore.Azure/obj/project.assets.json "Azure.Data.Tables"
           check src/SnapshotStore.Redis/obj/project.assets.json "Azure."
+          check src/SnapshotStore.Table/obj/project.assets.json "StackExchange.Redis"
+          check src/SnapshotStore.Table/obj/project.assets.json "Azure.Storage.Blobs"
           exit $fail
 
       - name: Test
@@ -87,6 +90,9 @@ jobs:
 
       - name: Pack SnapshotStore.Redis
         run: dotnet pack src/SnapshotStore.Redis/SnapshotStore.Redis.csproj -c Release --no-restore -o nupkgs
+
+      - name: Pack SnapshotStore.Table
+        run: dotnet pack src/SnapshotStore.Table/SnapshotStore.Table.csproj -c Release --no-restore -o nupkgs
 
       - name: NuGet login (OIDC -> temp API key)
         uses: NuGet/login@v1

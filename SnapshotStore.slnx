@@ -3,10 +3,12 @@
     <Project Path="src/SnapshotStore/SnapshotStore.csproj" />
     <Project Path="src/SnapshotStore.Azure/SnapshotStore.Azure.csproj" />
     <Project Path="src/SnapshotStore.Redis/SnapshotStore.Redis.csproj" />
+    <Project Path="src/SnapshotStore.Table/SnapshotStore.Table.csproj" />
   </Folder>
   <Folder Name="/tst/">
     <Project Path="tst/SnapshotStore.Tests/SnapshotStore.Tests.csproj" />
     <Project Path="tst/SnapshotStore.Redis.Tests/SnapshotStore.Redis.Tests.csproj" />
+    <Project Path="tst/SnapshotStore.Table.Tests/SnapshotStore.Table.Tests.csproj" />
   </Folder>
   <Folder Name="/samples/">
     <Project Path="samples/SnapshotStore.Sample/SnapshotStore.Sample.csproj" />

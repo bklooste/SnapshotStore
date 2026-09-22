@@ -9,8 +9,10 @@ source only for records changed since its high-water mark, merges by key, and wr
 enough changed. The snapshot is an optimisation, never a source of truth: cache failures are logged and
 absorbed, source failures propagate.
 
-Built for the case where a source is slow or rate-limited but the delta since last time is cheap: a paged
-Table/API read that only supports "changed since", or a Redis stream you want as a rolling materialised set.
+Built for the common **two-level shape**: a Table (or any paged store that only supports "changed since") is
+the system of record, and a Blob holds the materialised snapshot on top of it — one big cheap read instead of
+re-reading every row, every time. `SnapshotStore.Table` + `SnapshotStore.Azure` ship exactly that pair. Redis
+is a single-storage alternative when you want both sides in the same place.
 
 ## Why this instead of rolling your own
 
@@ -28,48 +30,60 @@ Table/API read that only supports "changed since", or a Redis stream you want as
 
 ## Quick start
 
+The common case — Table Storage as your data, Blob Storage as the cached snapshot:
+
 ```bash
 dotnet add package SnapshotStore
-dotnet add package SnapshotStore.Azure    # or SnapshotStore.Redis, or both
+dotnet add package SnapshotStore.Table
+dotnet add package SnapshotStore.Azure
 ```
 
 ```csharp
+var source = new TableRecordSource<Order>(tableClient, OrderJson.Default.Order);   // SnapshotStore.Table
+await source.WriteAsync(order, ct);   // however your data actually gets into Table
+
 var store = new SnapshotStore<Order>(
-    new AzureBlobSnapshotStore(container),               // SnapshotStore.Azure
+    new AzureBlobSnapshotStore(blobContainer),                                     // SnapshotStore.Azure
     new JsonGzipSnapshotSerializer<Order>(OrderJson.Default.Order));
 
-Snapshot<Order> snap = await store.LoadAsync($"{tenant}/{accountId}/Order", new OrderSource(client, tenant, accountId), ct);
+Snapshot<Order> snap = await store.LoadAsync($"{tenant}/{accountId}/Order", source, ct);
 ```
 
-Or backed by Redis instead of Blob (`SnapshotStore.Redis`):
+`LoadAsync` reads the Blob snapshot, asks Table only for rows changed since its high-water mark, and writes
+the merged result back to Blob. A runnable version, against a real Azurite, is in
+[samples/SnapshotStore.Sample](samples/SnapshotStore.Sample).
+
+Already have a different source of "changed since" — a paged API, your own Table client, anything else?
+Implement `IRecordSource<T>` (one method) instead of using `SnapshotStore.Table`; the Blob snapshot side is
+unchanged.
+
+Or use Redis for both sides instead of Table+Blob (`SnapshotStore.Redis`):
 
 ```csharp
 var store = new SnapshotStore<Order>(
     new RedisSnapshotStore(database, keyPrefix: "myservice:"),   // ISnapshotBlobStore
     new JsonGzipSnapshotSerializer<Order>(OrderJson.Default.Order));
 
-// And/or a Redis-backed IRecordSource<T> — a producer WriteAsync()s records, this reads them "since":
 var source = new RedisRecordSource<Order>(database, name: "orders", OrderJson.Default.Order, keyPrefix: "myservice:");
 await source.WriteAsync(order, ct);
 ```
-
-A runnable version of the Redis example is in [samples/SnapshotStore.Sample](samples/SnapshotStore.Sample).
 
 ## Storage backings
 
 Two things are pluggable, independently: where the **snapshot** is kept (`ISnapshotBlobStore`) and where the
 **source data** comes from (`IRecordSource<T>`). Each backing is its own package that pulls in only its own
-client — `SnapshotStore.Azure` never restores `StackExchange.Redis`, `SnapshotStore.Redis` never restores
-`Azure.*`, and the core restores neither. Mix them by referencing both packages, by choice.
+client — none of `SnapshotStore.Table`, `.Azure` or `.Redis` restores another's dependency, and the core
+restores none of them. Mix and match by referencing whichever packages you need.
 
 | Package | Contents | Depends on |
 |---|---|---|
 | `SnapshotStore` | interfaces, `SnapshotStore<T>`, `JsonGzipSnapshotSerializer<T>`, telemetry | `Microsoft.Extensions.Logging.Abstractions`, `OpenTelemetry.Api` |
-| `SnapshotStore.Azure` | `AzureBlobSnapshotStore(BlobContainerClient)` — ETag-conditional writes | core, `Azure.Storage.Blobs` |
-| `SnapshotStore.Redis` | `RedisSnapshotStore(IDatabase)` (Lua CAS, byte-size cap); `RedisRecordSource<T>` (sorted-set index + hash, keyset-paginated so a tie band larger than one page is never skipped) | core, `StackExchange.Redis` |
+| `SnapshotStore.Table` | `TableRecordSource<T>(TableClient)` — **source side only**, no snapshot storage. One row per record (RowKey = your `Key`, any characters — encoded transparently), a queryable timestamp column for "changed since". A property caps at 64 KB, an entity at 1 MB: many small-to-medium records, not a few huge ones | core, `Azure.Data.Tables` |
+| `SnapshotStore.Azure` | `AzureBlobSnapshotStore(BlobContainerClient)` — **snapshot side only**, ETag-conditional writes. No `IRecordSource<T>`; pair it with `SnapshotStore.Table` or your own source | core, `Azure.Storage.Blobs` |
+| `SnapshotStore.Redis` | `RedisSnapshotStore(IDatabase)` (Lua CAS, byte-size cap) **and** `RedisRecordSource<T>` (sorted-set index + hash, keyset-paginated so a tie band larger than one page is never skipped) — **both sides**, one store | core, `StackExchange.Redis` |
 
-The caller owns credentials/connections in both — a `BlobContainerClient` or an `IConnectionMultiplexer`
-passed in; neither package reads config or builds a client for you.
+The caller owns credentials/connections in every package — a `TableClient`, `BlobContainerClient` or
+`IConnectionMultiplexer` passed in; none of them read config or build a client for you.
 
 ## Behaviour spec
 
@@ -134,7 +148,7 @@ No gauges — the store holds no state between loads.
 
 ```bash
 dotnet build SnapshotStore.slnx
-dotnet test SnapshotStore.slnx --filter "TestType!=PerfTest"   # Redis tests need Docker
+dotnet test SnapshotStore.slnx --filter "TestType!=PerfTest"   # Redis/Table tests need Docker (real Redis/Azurite)
 ```
 
 Versions come from [Nerdbank.GitVersioning](https://github.com/dotnet/Nerdbank.GitVersioning)
