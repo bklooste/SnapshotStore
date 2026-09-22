@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <IsAotCompatible>true</IsAotCompatible>
+        <AssemblyName>SnapshotStore</AssemblyName>
+        <RootNamespace>SnapshotStore</RootNamespace>
+        <Description>Incremental read-through snapshot cache: merges records newer than a high-water mark into a stored snapshot.</Description>
+        <PackageTags>cache;snapshot;incremental;read-through;opentelemetry</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <!-- Deliberately no dependency on any storage SDK: this is the liftable core. Azure lives in
+         SnapshotStore.Azure, Redis in SnapshotStore.Redis. Neither backing references the other. -->
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+        <None Include="LICENSE" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.2" />
+        <PackageReference Include="OpenTelemetry.Api" Version="1.15.3" />
+    </ItemGroup>
+
+</Project>

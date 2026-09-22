@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SnapshotStore/SnapshotStore.csproj" />
+    <Project Path="src/SnapshotStore.Azure/SnapshotStore.Azure.csproj" />
+    <Project Path="src/SnapshotStore.Redis/SnapshotStore.Redis.csproj" />
+  </Folder>
+  <Folder Name="/tst/">
+    <Project Path="tst/SnapshotStore.Tests/SnapshotStore.Tests.csproj" />
+    <Project Path="tst/SnapshotStore.Redis.Tests/SnapshotStore.Redis.Tests.csproj" />
+  </Folder>
+  <Folder Name="/samples/">
+    <Project Path="samples/SnapshotStore.Sample/SnapshotStore.Sample.csproj" />
+  </Folder>
+</Solution>

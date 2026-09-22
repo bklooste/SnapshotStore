@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <AssemblyName>SnapshotStore.Azure</AssemblyName>
+        <RootNamespace>SnapshotStore.Azure</RootNamespace>
+        <Description>Azure Blob storage backing for SnapshotStore.</Description>
+        <PackageTags>cache;snapshot;incremental;read-through;azure-blob</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="LICENSE" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Azure.Storage.Blobs" Version="12.26.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SnapshotStore\SnapshotStore.csproj" />
+    </ItemGroup>
+
+</Project>
