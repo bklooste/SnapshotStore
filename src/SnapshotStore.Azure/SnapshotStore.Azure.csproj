@@ -6,10 +6,12 @@
         <RootNamespace>SnapshotStore.Azure</RootNamespace>
         <Description>Azure Blob storage backing for SnapshotStore.</Description>
         <PackageTags>cache;snapshot;incremental;read-through;azure-blob</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
         <None Include="LICENSE" Pack="true" PackagePath="\" />
+        <None Include="../../README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
     <ItemGroup>

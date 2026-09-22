@@ -13,7 +13,7 @@
     <!-- Deliberately no dependency on any storage SDK: this is the liftable core. Azure lives in
          SnapshotStore.Azure, Redis in SnapshotStore.Redis. Neither backing references the other. -->
     <ItemGroup>
-        <None Include="README.md" Pack="true" PackagePath="\" />
+        <None Include="../../README.md" Pack="true" PackagePath="\" />
         <None Include="LICENSE" Pack="true" PackagePath="\" />
     </ItemGroup>
 

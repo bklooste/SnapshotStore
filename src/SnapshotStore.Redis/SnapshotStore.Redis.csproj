@@ -6,12 +6,14 @@
         <RootNamespace>SnapshotStore.Redis</RootNamespace>
         <Description>Redis backing for SnapshotStore: a snapshot store, and a record source, over StackExchange.Redis.</Description>
         <PackageTags>cache;snapshot;incremental;read-through;redis</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <!-- StackExchange.Redis directly, not RedisEvents: this is key/value storage, not messaging, so it
          keeps the package free of any RedisEvents dependency. -->
     <ItemGroup>
         <None Include="LICENSE" Pack="true" PackagePath="\" />
+        <None Include="../../README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
     <ItemGroup>
