@@ -7,13 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-<<<<<<< HEAD
         <PackageReference Include="coverlet.collector" Version="10.0.1" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
-=======
-        <PackageReference Include="coverlet.collector" Version="6.0.2" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
->>>>>>> 9071b07 (Bump Microsoft.NET.Test.Sdk from 18.0.1 to 18.10.1)
         <PackageReference Include="xunit.v3" Version="3.2.2" />
         <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" />
     </ItemGroup>
